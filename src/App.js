@@ -24,8 +24,25 @@ const App = () => {
 
   useEffect(() => {
     initGame();
+
+    // Добавляем обработчики событий для предотвращения увеличения и оттягивания
+    document.addEventListener('touchmove', handleTouchMove, { passive: false });
+    document.addEventListener('dblclick', preventDoubleTapZoom);
+
+    return () => {
+      document.removeEventListener('touchmove', handleTouchMove);
+      document.removeEventListener('dblclick', preventDoubleTapZoom);
+    };
     // eslint-disable-next-line
   }, []);
+
+  const handleTouchMove = (e) => {
+    e.preventDefault();
+  };
+
+  const preventDoubleTapZoom = (e) => {
+    e.preventDefault();
+  };
 
   const shuffle = (array) => {
     for (let i = array.length - 1; i > 0; i--) {

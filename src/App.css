@@ -8,6 +8,7 @@ body {
     font-family: 'Roboto', sans-serif;
     margin: 0;
     color: #ffffff;
+    touch-action: none; /* Отключает оттягивание view */
 }
 
 #gameContainer {
@@ -22,6 +23,7 @@ body {
     display: flex;
     flex-direction: column;
     align-items: center;
+    overflow: hidden; /* Запрещает прокрутку содержимого */
 }
 
 .board {
