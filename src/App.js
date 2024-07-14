@@ -10,40 +10,10 @@ const App = () => {
   const [gameActive, setGameActive] = useState(false);
   const [gamesPlayed, setGamesPlayed] = useState(0);
   const [victories, setVictories] = useState(0);
-  const [spaceHeld, setSpaceHeld] = useState(false);
   const [wasted, setWasted] = useState(false);
   const [victory, setVictory] = useState(false);
-  const [positions, setPositions] = useState({ Uno: '', Due: '', Tre: '' });
+  const [positions, setPositions] = useState({ Uno: [], Due: [], Tre: [] });
   const [wastedPosition, setWastedPosition] = useState('');
-
-  useEffect(() => {
-    const handleKeyDown = (event) => {
-      if (event.code === 'Space' && !spaceHeld) {
-        setSpaceHeld(true);
-        const intervalId = setInterval(() => {
-          if (!spaceHeld) {
-            clearInterval(intervalId);
-          } else {
-            drawCard();
-          }
-        }, 100); // Adjust the interval as needed
-      }
-    };
-
-    const handleKeyUp = (event) => {
-      if (event.code === 'Space') {
-        setSpaceHeld(false);
-      }
-    };
-
-    document.addEventListener('keydown', handleKeyDown);
-    document.addEventListener('keyup', handleKeyUp);
-
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown);
-      document.removeEventListener('keyup', handleKeyUp);
-    };
-  }, [spaceHeld]);
 
   const initGame = () => {
     const initialDeck = suits.flatMap(suit => values.map(value => ({ suit, value })));
@@ -51,12 +21,15 @@ const App = () => {
     setDeck(shuffle(fullDeck));
     setCurrentCardIndex(0);
     setGameActive(true);
-    setSpaceHeld(false);
     setWasted(false);
     setVictory(false);
-    setPositions({ Uno: '', Due: '', Tre: '' });
+    setPositions({ Uno: [], Due: [], Tre: [] });
     setWastedPosition('');
   };
+
+  useEffect(() => {
+    initGame();
+  }, []);
 
   const shuffle = (array) => {
     for (let i = array.length - 1; i > 0; i--) {
@@ -75,7 +48,10 @@ const App = () => {
     const card = deck[currentCardIndex];
     const position = currentCardIndex % 3;
     const positionName = position === 0 ? 'Uno' : position === 1 ? 'Due' : 'Tre';
-    setPositions((prevPositions) => ({ ...prevPositions, [positionName]: card }));
+    setPositions((prevPositions) => ({
+      ...prevPositions,
+      [positionName]: [card], // Replace the card at the position
+    }));
     setCurrentCardIndex(currentCardIndex + 1);
 
     if ((position === 0 && card.value === 'ace') || (position === 1 && card.value === '2') || (position === 2 && card.value === '3')) {
@@ -102,38 +78,55 @@ const App = () => {
 
   return (
       <div id="gameContainer">
-        <h1>Card Game</h1>
-        <div className="deck-container">
-          <div className={`deck ${victory ? 'victory' : ''}`}>
-            <div className="label">Deck</div>
-            <div className="cardCount">{40 - currentCardIndex}</div>
-          </div>
-        </div>
         <div className="board">
           <div className={`position ${wastedPosition === 'Uno' ? 'wasted' : ''}`} id="uno">
-            <div className="label">UNO</div>
-            <div className="card">
-              {positions.Uno && <img src={getCardImage(positions.Uno)} alt={`${positions.Uno.value} of ${positions.Uno.suit}`} />}
+            <div className="label" style={{ display: positions.Uno.length ? 'none' : 'block' }}>UNO</div>
+            <div className="cards">
+              {positions.Uno.map((card, index) => (
+                  <img
+                      key={index}
+                      src={getCardImage(card)}
+                      alt={`${card.value} of ${card.suit}`}
+                      className="card"
+                  />
+              ))}
             </div>
           </div>
           <div className={`position ${wastedPosition === 'Due' ? 'wasted' : ''}`} id="due">
-            <div className="label">DUE</div>
-            <div className="card">
-              {positions.Due && <img src={getCardImage(positions.Due)} alt={`${positions.Due.value} of ${positions.Due.suit}`} />}
+            <div className="label" style={{ display: positions.Due.length ? 'none' : 'block' }}>DUE</div>
+            <div className="cards">
+              {positions.Due.map((card, index) => (
+                  <img
+                      key={index}
+                      src={getCardImage(card)}
+                      alt={`${card.value} of ${card.suit}`}
+                      className="card"
+                  />
+              ))}
             </div>
           </div>
           <div className={`position ${wastedPosition === 'Tre' ? 'wasted' : ''}`} id="tre">
-            <div className="label">TRE</div>
-            <div className="card">
-              {positions.Tre && <img src={getCardImage(positions.Tre)} alt={`${positions.Tre.value} of ${positions.Tre.suit}`} />}
+            <div className="label" style={{ display: positions.Tre.length ? 'none' : 'block' }}>TRE</div>
+            <div className="cards">
+              {positions.Tre.map((card, index) => (
+                  <img
+                      key={index}
+                      src={getCardImage(card)}
+                      alt={`${card.value} of ${card.suit}`}
+                      className="card"
+                  />
+              ))}
             </div>
           </div>
         </div>
-        {wasted && <div className="result wasted">WASTED</div>}
-        {victory && <div className="result victory">VICTORY</div>}
-        <button id="drawButton" onClick={drawCard}>
-          {gameActive ? 'Draw a Card' : 'Start Again'}
-        </button>
+        {wasted && <div className="result wasted"><span>WASTED</span></div>}
+        {victory && <div className="result victory"><span>VICTORY</span></div>}
+        <div className="deck-button-container">
+          <button id="drawButton" onClick={drawCard}>
+            <img src={`${process.env.PUBLIC_URL}/cards/skin.jpg`} alt="Draw a card" className="button-card" />
+          </button>
+          <div className="cardCount">{40 - currentCardIndex}</div>
+        </div>
         <div id="stats">
           Games played: <span id="gamesPlayed">{gamesPlayed}</span>
           <br />

@@ -23,17 +23,6 @@ body {
     align-items: center;
 }
 
-h1 {
-    color: #bfff00;
-    margin-bottom: 20px;
-}
-
-.deck-container {
-    display: flex;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
 .board {
     display: flex;
     justify-content: space-between;
@@ -42,9 +31,9 @@ h1 {
     position: relative;
 }
 
-.position, .deck {
+.position {
     width: 100px;
-    height: 150px;
+    height: 145.2px;
     border: 2px solid #6a11ee;
     border-radius: 5px;
     display: flex;
@@ -55,26 +44,20 @@ h1 {
 }
 
 .label {
-    position: absolute;
-    top: -20px;
+    margin-top: 5px;
     color: #bfff00;
     font-weight: bold;
 }
 
+.cards {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
 .card {
-    font-size: 18px;
-    color: #ffffff;
-    text-align: center;
-}
-
-.card img {
-    width: 80px;
-    height: auto;
-}
-
-.cardCount {
-    font-size: 24px;
-    color: #ffffff;
+    width: 100px;
+    height: 145.2px;
 }
 
 .wasted {
@@ -90,40 +73,47 @@ h1 {
     top: 50%;
     left: 50%;
     transform: translate(-50%, -50%);
+    width: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
     font-size: 48px;
     font-weight: bold;
     text-align: center;
     z-index: 10;
+    padding: 10px;
+    border-radius: 5px;
 }
 
-.result.wasted {
+.result.wasted span {
     color: #ff0000;
 }
 
-.result.victory {
+.result.victory span {
     color: #00ff00;
 }
 
+.deck-button-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 10px;
+}
+
 #drawButton {
-    margin-top: 20px;
-    padding: 10px 20px;
-    font-size: 18px;
-    cursor: pointer;
     border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.button-card {
+    width: 100px;
+    height: 145.2px;
     border-radius: 5px;
-    background-color: #bfff00;
-    color: #000000;
-    transition: background-color 0.3s;
 }
 
-#drawButton:hover {
-    background-color: #a3e500;
-}
-
-
-#drawButton:disabled {
-    background-color: #444444;
-    cursor: not-allowed;
+.cardCount {
+    margin-top: 10px;
+    font-size: 24px;
+    color: #ffffff;
 }
 
 #stats {
