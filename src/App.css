@@ -13,7 +13,8 @@ body {
 #gameContainer {
     text-align: center;
     padding: 20px;
-    width: 400px;
+    width: 100%;
+    max-width: 400px;
     border: 2px solid #6a11ee;
     border-radius: 10px;
     background-color: #1f1f1f;
@@ -43,12 +44,6 @@ body {
     position: relative;
 }
 
-.label {
-    margin-top: 5px;
-    color: #bfff00;
-    font-weight: bold;
-}
-
 .cards {
     display: flex;
     align-items: center;
@@ -58,37 +53,6 @@ body {
 .card {
     width: 100px;
     height: 145.2px;
-}
-
-.wasted {
-    border-color: #ff0000;
-}
-
-.victory {
-    border-color: #00ff00;
-}
-
-.result {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    width: 100%;
-    background-color: rgba(0, 0, 0, 0.5);
-    font-size: 48px;
-    font-weight: bold;
-    text-align: center;
-    z-index: 10;
-    padding: 10px;
-    border-radius: 5px;
-}
-
-.result.wasted span {
-    color: #ff0000;
-}
-
-.result.victory span {
-    color: #00ff00;
 }
 
 .deck-button-container {

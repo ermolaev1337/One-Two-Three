@@ -10,21 +10,16 @@ const App = () => {
   const [gameActive, setGameActive] = useState(false);
   const [gamesPlayed, setGamesPlayed] = useState(0);
   const [victories, setVictories] = useState(0);
-  const [wasted, setWasted] = useState(false);
-  const [victory, setVictory] = useState(false);
+  const [totalClicks, setTotalClicks] = useState(0);
   const [positions, setPositions] = useState({ Uno: [], Due: [], Tre: [] });
-  const [wastedPosition, setWastedPosition] = useState('');
 
   const initGame = () => {
     const initialDeck = suits.flatMap(suit => values.map(value => ({ suit, value })));
-    const fullDeck = [...initialDeck, ...initialDeck, ...initialDeck, ...initialDeck];
-    setDeck(shuffle(fullDeck));
+    const fullDeck = shuffle([...initialDeck, ...initialDeck, ...initialDeck, ...initialDeck]);
+    setDeck(fullDeck);
     setCurrentCardIndex(0);
     setGameActive(true);
-    setWasted(false);
-    setVictory(false);
     setPositions({ Uno: [], Due: [], Tre: [] });
-    setWastedPosition('');
   };
 
   useEffect(() => {
@@ -40,26 +35,35 @@ const App = () => {
     return array;
   };
 
+  const playSound = (soundFile) => {
+    const audio = new Audio(`${process.env.PUBLIC_URL}/sounds/${soundFile}`);
+    audio.play();
+  };
+
   const drawCard = () => {
     if (!gameActive) {
       initGame();
       return;
     }
 
+    setTotalClicks(totalClicks + 1);
     const card = deck[currentCardIndex];
     const position = currentCardIndex % 3;
     const positionName = position === 0 ? 'Uno' : position === 1 ? 'Due' : 'Tre';
     setPositions((prevPositions) => ({
       ...prevPositions,
-      [positionName]: [card], // Replace the card at the position
+      [positionName]: [card],
     }));
     setCurrentCardIndex(currentCardIndex + 1);
+
+    const soundName = position === 0 ? 'uno.mp3' : position === 1 ? 'due.mp3' : 'tre.mp3';
+    playSound(soundName);
 
     if ((position === 0 && card.value === 'ace') || (position === 1 && card.value === '2') || (position === 2 && card.value === '3')) {
       setGameActive(false);
       setGamesPlayed(gamesPlayed + 1);
-      setWasted(true);
-      setWastedPosition(positionName);
+      playSound('porco_dio.mp3');
+      setTimeout(initGame, 1000);  // Start a new game after 1 second
       return;
     }
 
@@ -67,7 +71,8 @@ const App = () => {
       setGameActive(false);
       setGamesPlayed(gamesPlayed + 1);
       setVictories(victories + 1);
-      setVictory(true);
+      playSound('molto_bene.mp3');
+      setTimeout(initGame, 1000);  // Start a new game after 1 second
       return;
     }
   };
@@ -80,8 +85,7 @@ const App = () => {
   return (
       <div id="gameContainer">
         <div className="board">
-          <div className={`position ${wastedPosition === 'Uno' ? 'wasted' : ''}`} id="uno">
-            <div className="label" style={{ display: positions.Uno.length ? 'none' : 'block' }}>UNO</div>
+          <div className="position" id="uno">
             <div className="cards">
               {positions.Uno.map((card, index) => (
                   <img
@@ -93,8 +97,7 @@ const App = () => {
               ))}
             </div>
           </div>
-          <div className={`position ${wastedPosition === 'Due' ? 'wasted' : ''}`} id="due">
-            <div className="label" style={{ display: positions.Due.length ? 'none' : 'block' }}>DUE</div>
+          <div className="position" id="due">
             <div className="cards">
               {positions.Due.map((card, index) => (
                   <img
@@ -106,8 +109,7 @@ const App = () => {
               ))}
             </div>
           </div>
-          <div className={`position ${wastedPosition === 'Tre' ? 'wasted' : ''}`} id="tre">
-            <div className="label" style={{ display: positions.Tre.length ? 'none' : 'block' }}>TRE</div>
+          <div className="position" id="tre">
             <div className="cards">
               {positions.Tre.map((card, index) => (
                   <img
@@ -120,8 +122,6 @@ const App = () => {
             </div>
           </div>
         </div>
-        {wasted && <div className="result wasted"><span>WASTED</span></div>}
-        {victory && <div className="result victory"><span>VICTORY</span></div>}
         <div className="deck-button-container">
           <button id="drawButton" onClick={drawCard}>
             <img src={`${process.env.PUBLIC_URL}/cards/skin.jpg`} alt="Draw a card" className="button-card" />
@@ -129,6 +129,8 @@ const App = () => {
           <div className="cardCount">{40 - currentCardIndex}</div>
         </div>
         <div id="stats">
+          Total clicks: <span id="totalClicks">{totalClicks}</span>
+          <br />
           Games played: <span id="gamesPlayed">{gamesPlayed}</span>
           <br />
           Victories: <span id="victories">{victories}</span>
