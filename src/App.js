@@ -29,6 +29,7 @@ const App = () => {
 
   useEffect(() => {
     initGame();
+    // eslint-disable-next-line
   }, []);
 
   const shuffle = (array) => {
